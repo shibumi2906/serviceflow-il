@@ -8,8 +8,27 @@ permissions:
   contents: read
 
 jobs:
-  phase-0-quality:
+  phase-1-quality:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: serviceflow_dev
+          POSTGRES_USER: serviceflow
+          POSTGRES_PASSWORD: serviceflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U serviceflow -d serviceflow_dev"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      APP_ENV: test
+      APP_SECRET_KEY: test-secret-key-that-is-at-least-32-characters
+      DATABASE_URL: postgresql+psycopg://serviceflow:serviceflow@127.0.0.1:5432/serviceflow_test
+      SESSION_COOKIE_SECURE: "false"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -21,7 +40,9 @@ jobs:
           cache: pip
 
       - name: Install locked dependencies
-        run: python -m pip install -r requirements.lock
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install --no-deps -e .
 
-      - name: Run format, lint, type, and unit checks
+      - name: Run complete Phase 1 quality gate
         run: python scripts/check.py

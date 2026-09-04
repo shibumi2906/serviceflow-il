@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}עובדים | ServiceFlow IL{% endblock %}
+{% block content %}
+<h1>ניהול עובדים</h1>
+<section class="card"><h2>עובד חדש</h2><form method="post" class="form-grid"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label>שם <input name="display_name" required></label><label>דוא״ל <input name="email" type="email" required></label><label>סיסמה ראשונית <input name="password" type="password" minlength="12" required></label><label>תפקיד <select name="role">{% for role in roles %}<option value="{{ role.value }}">{{ role_labels[role] }}</option>{% endfor %}</select></label><button type="submit">יצירה</button></form></section>
+<section class="card table-wrap"><table><thead><tr><th>שם</th><th>דוא״ל</th><th>תפקיד</th><th>מצב</th><th>פעולה</th></tr></thead><tbody>{% for staff in users %}<tr><td>{{ staff.display_name }}</td><td>{{ staff.email }}</td><td>{{ role_labels[staff.role] }}</td><td>{{ 'פעיל' if staff.is_active else 'לא פעיל' }}</td><td>{% if staff.id != user.id %}<form method="post" action="/admin/users/{{ staff.id }}/active"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="is_active" value="{{ 'false' if staff.is_active else 'true' }}"><button type="submit">{{ 'השבתה' if staff.is_active else 'הפעלה' }}</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></section>
+{% endblock %}

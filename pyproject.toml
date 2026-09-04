@@ -4,12 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "serviceflow-il"
-version = "0.1.0"
+version = "0.2.0"
 description = "ServiceFlow IL phased AWS learning project"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 dependencies = [
+    "alembic>=1.16,<2",
+    "email-validator>=2.2,<3",
     "fastapi>=0.116,<1",
+    "jinja2>=3.1,<4",
+    "psycopg[binary]>=3.2,<4",
+    "pwdlib[argon2]>=0.3,<1",
+    "pydantic-settings>=2.10,<3",
+    "python-multipart>=0.0.20,<1",
+    "sqlalchemy>=2.0,<3",
     "uvicorn>=0.35,<1",
 ]
 
@@ -17,6 +25,7 @@ dependencies = [
 dev = [
     "httpx>=0.28,<1",
     "mypy>=1.17,<2",
+    "pip-audit>=2.9,<3",
     "pip-tools>=7.5,<8",
     "pytest>=8.4,<10",
     "ruff>=0.12,<1",
@@ -25,10 +34,16 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+serviceflow = ["presentation/templates/**/*.html", "presentation/static/*.css"]
+
 [tool.pytest.ini_options]
-addopts = "-ra"
-testpaths = ["tests/unit"]
+addopts = "-ra -p no:cacheprovider"
+testpaths = ["tests"]
 pythonpath = ["src"]
+markers = [
+    "integration: requires the isolated PostgreSQL test database",
+]
 
 [tool.ruff]
 target-version = "py312"
@@ -36,6 +51,9 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/serviceflow/presentation/**/*.py" = ["B008"]
 
 [tool.mypy]
 python_version = "3.12"

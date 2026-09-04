@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}קריאה חדשה | ServiceFlow IL{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>יצירת קריאת שירות</h1>
+  <form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>לקוח <select name="customer_id" required>{% for customer in customers %}<option value="{{ customer.id }}">{{ customer.name }}</option>{% endfor %}</select></label>
+    <label>כותרת <input name="title" required maxlength="200"></label>
+    <label>תיאור <textarea name="description" required rows="6"></textarea></label>
+    <label>עדיפות <select name="priority">{% for value in priorities %}<option value="{{ value.value }}">{{ priority_labels[value] }}</option>{% endfor %}</select></label>
+    <label>אחראי <select name="assigned_to"><option value="">ללא הקצאה</option>{% for assignee in users %}<option value="{{ assignee.id }}">{{ assignee.display_name }}</option>{% endfor %}</select></label>
+    <button type="submit">שמירה</button>
+  </form>
+</section>
+{% endblock %}

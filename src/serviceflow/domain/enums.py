@@ -1,0 +1,33 @@
+"""Domain enumerations."""
+
+from enum import StrEnum
+
+
+class Role(StrEnum):
+    ADMINISTRATOR = "ADMINISTRATOR"
+    DISPATCHER = "DISPATCHER"
+    TECHNICIAN = "TECHNICIAN"
+
+
+class RequestPriority(StrEnum):
+    LOW = "LOW"
+    NORMAL = "NORMAL"
+    HIGH = "HIGH"
+    URGENT = "URGENT"
+
+
+class RequestStatus(StrEnum):
+    NEW = "NEW"
+    ASSIGNED = "ASSIGNED"
+    IN_PROGRESS = "IN_PROGRESS"
+    WAITING_CUSTOMER = "WAITING_CUSTOMER"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
+class EventType(StrEnum):
+    REQUEST_CREATED = "REQUEST_CREATED"
+    STATUS_CHANGED = "STATUS_CHANGED"
+    PRIORITY_CHANGED = "PRIORITY_CHANGED"
+    ASSIGNEE_CHANGED = "ASSIGNEE_CHANGED"
+    COMMENT_ADDED = "COMMENT_ADDED"

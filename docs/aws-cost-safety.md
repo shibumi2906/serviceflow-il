@@ -1,9 +1,10 @@
 # AWS cost safety
 
-## Phase 0 status
+## Phase 1 status
 
-Phase 0 is local-only. It creates no AWS resources, makes no AWS API calls, and
-contains no Terraform configuration. Its AWS cost is **USD 0**.
+Phase 1 is local-only. It creates no AWS resources, makes no AWS API calls, and
+contains no Terraform configuration. PostgreSQL runs only in local Docker Compose.
+Its AWS cost is **USD 0**.
 
 ## Mandatory safeguards for future phases
 

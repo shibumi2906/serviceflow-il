@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}לקוחות | ServiceFlow IL{% endblock %}
+{% block content %}
+<h1>לקוחות</h1>
+{% if user.role.value != 'TECHNICIAN' %}<section class="card"><h2>לקוח חדש</h2><form method="post" class="form-grid"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label>שם <input name="name" required></label><label>טלפון <input name="phone" type="tel"></label><label>דוא״ל <input name="email" type="email"></label><label>כתובת <input name="address"></label><label class="wide">הערה <textarea name="note"></textarea></label><button type="submit">שמירה</button></form></section>{% endif %}
+<section class="card table-wrap"><table><thead><tr><th>שם</th><th>טלפון</th><th>דוא״ל</th><th>כתובת</th></tr></thead><tbody>{% for customer in customers %}<tr><td>{{ customer.name }}</td><td>{{ customer.phone or '—' }}</td><td>{{ customer.email or '—' }}</td><td>{{ customer.address or '—' }}</td></tr>{% else %}<tr><td colspan="4">אין לקוחות.</td></tr>{% endfor %}</tbody></table></section>
+{% endblock %}

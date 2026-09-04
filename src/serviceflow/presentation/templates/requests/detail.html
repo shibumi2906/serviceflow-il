@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}קריאה #{{ item.request_number }} | ServiceFlow IL{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p>קריאה #{{ item.request_number }}</p><h1>{{ item.title }}</h1></div><a href="/requests">חזרה לרשימה</a></div>
+<section class="card details-grid">
+  <div><strong>לקוח</strong><p>{{ item.customer.name }}</p></div>
+  <div><strong>סטטוס</strong><p>{{ status_labels[item.status] }}</p></div>
+  <div><strong>עדיפות</strong><p>{{ priority_labels[item.priority] }}</p></div>
+  <div><strong>אחראי</strong><p>{{ item.assignee.display_name if item.assignee else 'לא הוקצה' }}</p></div>
+  <div class="wide"><strong>תיאור</strong><p class="preserve">{{ item.description }}</p></div>
+</section>
+{% if user.role.value != 'TECHNICIAN' %}
+<section class="card">
+  <h2>הקצאה ועדיפות</h2>
+  <form method="post" action="/requests/{{ item.id }}/manage" class="inline-fields">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="version" value="{{ item.version }}">
+    <label>אחראי <select name="assigned_to"><option value="">ללא הקצאה</option>{% for assignee in users %}<option value="{{ assignee.id }}" {% if item.assigned_to == assignee.id %}selected{% endif %}>{{ assignee.display_name }}</option>{% endfor %}</select></label>
+    <label>עדיפות <select name="priority">{% for value in priority_labels %}<option value="{{ value.value }}" {% if item.priority == value %}selected{% endif %}>{{ priority_labels[value] }}</option>{% endfor %}</select></label>
+    <button type="submit">עדכון</button>
+  </form>
+</section>
+{% endif %}
+<section class="card">
+  <h2>עדכון סטטוס</h2>
+  <form method="post" action="/requests/{{ item.id }}/status" class="inline-fields">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="version" value="{{ item.version }}">
+    <select name="status">{% for value in statuses %}<option value="{{ value.value }}" {% if item.status == value %}selected{% endif %}>{{ status_labels[value] }}</option>{% endfor %}</select><button type="submit">עדכון</button>
+  </form>
+</section>
+<section class="card"><h2>תגובות</h2><form method="post" action="/requests/{{ item.id }}/comments" class="stack"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><textarea name="body" required rows="3"></textarea><button type="submit">הוספת תגובה</button></form>
+  <div class="timeline">{% for comment in comments %}<article><strong>{{ comment.author.display_name }}</strong><time>{{ comment.created_at.strftime('%d/%m/%Y %H:%M') }}</time><p>{{ comment.body }}</p></article>{% else %}<p>אין תגובות.</p>{% endfor %}</div>
+</section>
+<section class="card"><h2>היסטוריה</h2><div class="timeline">{% for event in events %}<article><strong>{{ event.event_type.value }}</strong><time>{{ event.created_at.strftime('%d/%m/%Y %H:%M') }}</time><code>{{ event.payload }}</code></article>{% endfor %}</div></section>
+{% endblock %}

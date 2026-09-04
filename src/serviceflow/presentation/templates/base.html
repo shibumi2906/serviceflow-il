@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ServiceFlow IL{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/requests">ServiceFlow IL</a>
+      {% if user %}
+        <nav aria-label="ניווט ראשי">
+          <a href="/requests">קריאות שירות</a>
+          <a href="/customers">לקוחות</a>
+          {% if user.role.value == 'ADMINISTRATOR' %}<a href="/admin/users">עובדים</a>{% endif %}
+        </nav>
+        <form action="/logout" method="post" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="link-button" type="submit">יציאה</button>
+        </form>
+      {% endif %}
+    </header>
+    <main class="container">{% block content %}{% endblock %}</main>
+  </body>
+</html>

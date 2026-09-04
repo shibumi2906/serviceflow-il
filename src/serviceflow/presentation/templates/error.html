@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}שגיאה {{ status_code }} | ServiceFlow IL{% endblock %}
+{% block content %}
+<section class="card narrow error-page">
+  <p class="error-code">{{ status_code }}</p>
+  <h1>אירעה שגיאה</h1>
+  <p>{{ message }}</p>
+  <a class="button" href="/requests">חזרה לקריאות השירות</a>
+</section>
+{% endblock %}

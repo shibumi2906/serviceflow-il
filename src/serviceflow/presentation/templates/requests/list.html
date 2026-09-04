@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}קריאות שירות | ServiceFlow IL{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><h1>קריאות שירות</h1><p>{{ total }} קריאות נמצאו</p></div>
+  {% if user.role.value != 'TECHNICIAN' %}<a class="button" href="/requests/new">קריאה חדשה</a>{% endif %}
+</div>
+<form method="get" class="filters card">
+  <label>חיפוש <input name="search" value="{{ search }}" placeholder="מספר, כותרת, לקוח או טלפון"></label>
+  <label>סטטוס
+    <select name="status"><option value="">הכול</option>{% for value in statuses %}<option value="{{ value.value }}" {% if selected_status == value %}selected{% endif %}>{{ status_labels[value] }}</option>{% endfor %}</select>
+  </label>
+  <label>עדיפות
+    <select name="priority"><option value="">הכול</option>{% for value in priorities %}<option value="{{ value.value }}" {% if selected_priority == value %}selected{% endif %}>{{ priority_labels[value] }}</option>{% endfor %}</select>
+  </label>
+  <label>אחראי
+    <select name="assignee_id"><option value="">הכול</option>{% for assignee in users %}<option value="{{ assignee.id }}" {% if selected_assignee == assignee.id %}selected{% endif %}>{{ assignee.display_name }}</option>{% endfor %}</select>
+  </label>
+  <button type="submit">סינון</button>
+</form>
+<div class="table-wrap card">
+  <table>
+    <thead><tr><th>מספר</th><th>כותרת</th><th>לקוח</th><th>סטטוס</th><th>עדיפות</th><th>עודכן</th></tr></thead>
+    <tbody>
+      {% for item in requests %}
+      <tr><td><a href="/requests/{{ item.id }}">#{{ item.request_number }}</a></td><td>{{ item.title }}</td><td>{{ item.customer.name }}</td><td><span class="badge">{{ status_labels[item.status] }}</span></td><td>{{ priority_labels[item.priority] }}</td><td>{{ item.updated_at.strftime('%d/%m/%Y %H:%M') }}</td></tr>
+      {% else %}<tr><td colspan="6">לא נמצאו קריאות.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<nav class="pagination" aria-label="עמודים">
+  {% if page > 1 %}<a class="button" href="?page={{ page - 1 }}">הקודם</a>{% endif %}
+  <span>עמוד {{ page }}</span>
+  {% if total > page * 20 %}<a class="button" href="?page={{ page + 1 }}">הבא</a>{% endif %}
+</nav>
+{% endblock %}

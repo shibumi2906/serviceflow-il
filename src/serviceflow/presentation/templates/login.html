@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}כניסה | ServiceFlow IL{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>כניסה למערכת</h1>
+  <form method="post" action="/login" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>דוא״ל <input name="email" type="email" required autocomplete="username"></label>
+    <label>סיסמה <input name="password" type="password" required autocomplete="current-password"></label>
+    <button type="submit">כניסה</button>
+  </form>
+</section>
+{% endblock %}
