@@ -30,3 +30,12 @@ Thumbs.db
 # Build output
 build/
 dist/
+
+# Terraform local state and tooling
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+.tflint.d/
+.trivy-phase2/

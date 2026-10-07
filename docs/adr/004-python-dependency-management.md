@@ -11,14 +11,16 @@ file. The project should remain usable with the standard Python toolchain.
 ## Decision
 
 Declare direct runtime and development dependencies in `pyproject.toml`. Use
-`pip-tools` to resolve them into `requirements.lock`, and install environments
-from that lock with `pip`. Application packaging uses the standard PEP 517 build
-interface through setuptools.
+`pip-tools` to resolve them into `requirements.lock` for development and CI and
+`requirements.runtime.lock` for the smaller production image. Install from those
+locks with `pip`. Application packaging uses the standard PEP 517 build interface
+through setuptools.
 
 ## Consequences
 
-CI and local development install the same pinned dependency graph. A dependency
-change requires regenerating and reviewing the lock file. Developers need no
+CI and local development install the same pinned development graph; the image uses
+the matching pinned runtime subset without test tooling. A dependency change
+requires regenerating and reviewing both lock files. Developers need no
 project-specific package manager beyond the locked Python tools.
 
 ## Alternatives considered

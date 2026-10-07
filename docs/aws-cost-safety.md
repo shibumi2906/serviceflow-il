@@ -1,10 +1,22 @@
 # AWS cost safety
 
-## Phase 1 status
+## Phase 2 status
 
-Phase 1 is local-only. It creates no AWS resources, makes no AWS API calls, and
-contains no Terraform configuration. PostgreSQL runs only in local Docker Compose.
-Its AWS cost is **USD 0**.
+Phase 1 remains local-only. Phase 2 adds Terraform for a reviewed temporary smoke
+deployment, but no AWS resource may be created before its exact plan is approved.
+
+Approximate Phase 2 cost drivers vary by region:
+
+- one 0.25-vCPU/0.5-GiB Fargate task: roughly USD 0.01-0.02 per running hour;
+- one public IPv4 address: roughly USD 0.005 per running hour;
+- ECR storage: roughly USD 0.10 per GB-month;
+- CloudWatch log ingestion and storage: normally cents for this small smoke test;
+- ECR repository, ECS cluster, task definitions, IAM roles, and security group:
+  no direct hourly charge.
+
+A short verification should cost cents. Leaving the task continuously running can
+cost roughly USD 10-15 per month before region-specific taxes and data transfer.
+Phase 2 has no NAT Gateway, ALB, RDS, S3, Secrets Manager, or custom VPC.
 
 ## Mandatory safeguards for future phases
 
@@ -20,6 +32,8 @@ Its AWS cost is **USD 0**.
 - Use a single ECS task and the smallest validated development sizes.
 - Set finite log retention and storage lifecycle rules.
 - Never run load tests in AWS without separate approval.
+- Use two reviewed plans: create the bootstrap first, then enable the one-task
+  service only after its immutable image exists in ECR.
 
 ## Expected future cost sources
 

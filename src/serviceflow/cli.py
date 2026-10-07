@@ -31,6 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     settings = get_settings()
+    if settings.database_url is None:
+        raise RuntimeError("DATABASE_URL is required for administrative commands")
     session_factory = build_session_factory(build_engine(settings.database_url))
     try:
         with session_factory() as session:

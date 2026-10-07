@@ -28,3 +28,15 @@ def test_production_rejects_placeholder_application_secret() -> None:
             database_url="postgresql+psycopg://database.invalid/serviceflow",
             session_cookie_secure=True,
         )
+
+
+def test_production_smoke_mode_needs_no_database_or_secret() -> None:
+    settings = Settings(
+        app_mode="smoke",
+        app_env="production",
+        app_secret_key=None,
+        database_url=None,
+    )
+
+    assert settings.database_url is None
+    assert settings.app_secret_key is None

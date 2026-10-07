@@ -38,12 +38,18 @@ def create_app(
 ) -> FastAPI:
     """Construct an application with replaceable infrastructure for tests."""
     settings = settings or get_settings()
-    if session_factory is None:
+    if settings.app_mode == "full" and session_factory is None:
+        if settings.database_url is None:  # guarded by Settings validation
+            raise RuntimeError("DATABASE_URL is required in full mode")
         session_factory = build_session_factory(build_engine(settings.database_url))
-    docs_url = None if settings.app_env == "production" else "/docs"
+    docs_url = (
+        None
+        if settings.app_env == "production" or settings.app_mode == "smoke"
+        else "/docs"
+    )
     application = FastAPI(
         title="ServiceFlow IL",
-        version="0.2.0",
+        version="0.3.0",
         debug=settings.app_debug,
         docs_url=docs_url,
         redoc_url=None,
@@ -77,8 +83,9 @@ def create_app(
     application.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
     application.add_exception_handler(HTTPException, http_error_handler)  # type: ignore[arg-type]
     application.add_exception_handler(Exception, unexpected_error_handler)
-    application.include_router(api_router)
-    application.include_router(web_router)
+    if settings.app_mode == "full":
+        application.include_router(api_router)
+        application.include_router(web_router)
 
     @application.get("/health/live", tags=["health"])
     async def liveness() -> dict[str, str]:
@@ -86,6 +93,10 @@ def create_app(
 
     @application.get("/health/ready", tags=["health"])
     def readiness() -> JSONResponse:
+        if settings.app_mode == "smoke":
+            return JSONResponse({"status": "ok", "mode": "smoke"})
+        if session_factory is None:  # guarded by the full-mode setup above
+            return JSONResponse({"status": "not_ready"}, status_code=503)
         try:
             with session_factory() as session:
                 session.execute(text("SELECT 1"))

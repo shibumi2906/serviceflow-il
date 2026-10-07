@@ -1,0 +1,4 @@
+aws_region     = "replace-with-approved-aws-region"
+owner_tag      = "serviceflow-learning"
+deploy_service = false
+image_tag      = null
