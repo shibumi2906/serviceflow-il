@@ -230,6 +230,15 @@ one temporary security group, task definition, and one-task Fargate service in t
 account's default VPC. The task has no inbound security-group rules and runs only
 the restricted smoke mode.
 
+The smoke deployment was successfully executed and verified in `il-central-1`:
+ECS cluster and service `serviceflow-il-dev` ran one Fargate task that reached
+`RUNNING`, and ECS reported `healthStatus=HEALTHY`. `/health/live` repeatedly
+returned HTTP 200. Application logs were successfully delivered to CloudWatch log
+group `/ecs/serviceflow-il-dev`, and the Docker image was pulled from the ECR
+repository `serviceflow-il-dev`. Networking used the default VPC with a public IP,
+no inbound security-group rules, and no NAT Gateway. This remains only an
+operational smoke test, not a production deployment or user-facing service.
+
 This phase intentionally contains no ALB, RDS, S3, Secrets Manager, NAT Gateway,
 custom VPC, or long-running production environment. Plans, applies, image pushes,
 deployments, and destroys require explicit approval. Images use immutable full Git
@@ -283,7 +292,8 @@ docs/runbooks/                    local and AWS operating procedures
 
 ## Current limitations
 
-The Phase 2 cloud target is an operational smoke test, not a user-facing service.
-It has no public route, database, persistence, or business API. Production
+The verified Phase 2 cloud deployment is an operational smoke test, not a
+user-facing service. It has no public route, database, persistence, or business
+API. Production
 networking, managed PostgreSQL, attachments, secret storage, CI/CD identity, and
 other Phase 3+ capabilities are intentionally deferred.
